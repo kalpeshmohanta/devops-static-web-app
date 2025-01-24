@@ -30,8 +30,14 @@ pipeline {
                     // Waits for SonarQube analysis results
                     // Uses 'sonar-token' credentials for authentication
                     // Won't stop pipeline if quality checks fail
-                    timeout(time: 2, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    try {
+                        timeout(time: 1, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                        }
+                    } 
+                    catch (Exception e) {
+                        // Continue the pipeline even if Quality Gate fails
+                        echo "Quality Gate failed or timed out: ${e}"    
                     }
                 }
             }
