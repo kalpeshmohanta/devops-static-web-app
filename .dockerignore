@@ -1,0 +1,21 @@
+# Version Control
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Development files
+README.md
+LICENSE
+*.log
+node_modules/
+
+# IDE specific
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
