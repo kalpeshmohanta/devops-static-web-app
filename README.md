@@ -224,9 +224,8 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
 
     ![ArgoCD](images/argocd.png)
 
-### Installing Prometheus Operator and Grafana
-
-    - Using helm(package manager) to install Prometheus Operator including Grafana
+### Prometheus and Grafana
+1. **Using helm(package manager) to install Prometheus Operator including Grafana**
     - Add the Helm Stable Charts for your local client. Execute the below command
         ```bash
         helm repo add stable https://charts.helm.sh/stable
@@ -253,7 +252,7 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
         ```bash
         kubectl get svc -n prometheus
         ```
-1. **Access Prometheus & Grafana UI in the browser using the LoadBalancer URL from svc**
+2. **Access Prometheus & Grafana UI in the browser using the LoadBalancer URL from svc**
     - Get Secrets in prometheus namespace for Grafana password
         ```bash
         kubectl get secret -n prometheus stable-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
@@ -273,7 +272,7 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
         - After that it will show monitoring dashboard for all cluster nodes
 
     ![Grafana](images/grafana.png)
-2. **Access your Application:**
+3. **Access your Application:**
 
    - Access the app through the LoadBalancer address which was mentioned in `step 1`.
 
