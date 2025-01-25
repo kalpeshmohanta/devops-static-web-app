@@ -138,6 +138,12 @@ This guide provides step-by-step instructions for setting up and deploying the a
 
 3. **Create a Jenkins Webhook:**
 
+    - Go to your GitHub repository settings → **Webhooks** → **Add webhook**.
+    - Set the **Payload URL** to `http://<jenkins-url>/github-webhook/` (replace `<jenkins-url>` with your Jenkins server URL).
+    - Set the **Content type** to `application/json`.
+    - Choose the events you want to trigger the webhook (e.g., **Push events**).
+    - Save the webhook.
+
 ### Step: Install Docker Tools and Docker Plugins
 
 1. Go to **Dashboard** in your Jenkins web interface.
