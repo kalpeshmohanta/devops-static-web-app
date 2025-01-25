@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: static-web-app
-        image: kalpeshmohanta/app-image:latest
+        image: kalpeshmohanta/app-image:3
         ports:
           - containerPort: 80
