@@ -11,7 +11,7 @@ This guide provides step-by-step instructions for setting up and deploying the a
     ```bash
     sudo apt-get update
     sudo apt-get install docker.io -y
-    sudo usermod -aG docker \$USER  # Replace with your system's username, e.g., 'ubuntu'
+    sudo usermod -aG docker $USER  # Replace with your system's username, e.g., 'ubuntu'
     newgrp docker
     sudo chmod 777 /var/run/docker.sock
     ```
@@ -43,12 +43,12 @@ This guide provides step-by-step instructions for setting up and deploying the a
 1. **Install SonarQube:**
 
     ```bash
-    docker run -d --name sonar -p 9000:9000 sonarqube\:lts-community
+    docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
     ```
 
     To access:
 
-    `publicIP:9000` (by default username & password is admin)
+    `publicIP:9000` (default username & password: `admin`)
 
 2. **Set the Docker Container Restart Policy for SonarQube:**
 
@@ -65,7 +65,7 @@ This guide provides step-by-step instructions for setting up and deploying the a
     ```bash
     sudo apt-get install wget apt-transport-https gnupg lsb-release
     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-    echo deb https://aquasecurity.github.io/trivy-repo/deb \$(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
     sudo apt-get update
     sudo apt-get install trivy
     ```
@@ -162,17 +162,13 @@ This guide provides step-by-step instructions for setting up and deploying the a
 
 ### Step: Grant Rights for Jenkins Service to Execute Docker Commands
 
-```sh
+```bash
 sudo su
 sudo usermod -aG docker jenkins # Adds the Jenkins user to the Docker group
 sudo systemctl restart jenkins  # Restart Jenkins Server
+```
 
-
-# Kubernetes Setup and Cleanup Guide
-
-This guide provides step-by-step instructions for setting up Kubernetes and cleaning up resources.
-
-## Phase 6: Kubernetes
+## Phase 4: Kubernetes Setup
 
 ### Prerequisite
 
@@ -216,7 +212,7 @@ In this phase, you'll set up a Kubernetes cluster with node groups. This will pr
 
    - To access the app through the LoadBalancer address.
 
-## Phase 7: Cleanup
+## Phase 5: Cleanup
 
 ### Step: Cleanup AWS EC2 Instances
 
