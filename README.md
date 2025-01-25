@@ -222,7 +222,7 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
     - `source`: Set the source of your application, including the GitHub repository URL, revision, and the path to the application within the repository.
     - `syncPolicy`: Configure the sync policy, including automatic syncing, pruning, and self-healing.
 
-    ![ArgoCD](images/1argocd.png)
+    ![ArgoCD](images/argocd.png)
 
 4. **Installing prometheus and grafana**
 
@@ -261,7 +261,7 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
     - Grafana `UserName: admin` & `Password: prom-operator`
     - Access the prometheus UI using the LoadBalancer URL from svc with port `9090`
 
-    ![Prometheus](images/2prometheus.png)
+    ![Prometheus](images/prometheus.png)
 
     - Access the grafana UI using the LoadBalancer URL from svc
     - creating a dashboard to monitor the cluster
@@ -272,12 +272,12 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
         - Click ‘Import’.
         - After that it will show monitoring dashboard for all cluster nodes
 
-    ![Grafana](images/3grafana.png)
+    ![Grafana](images/grafana.png)
 6. **Access your Application:**
 
    - Access the app through the LoadBalancer address which was mentioned in `step 1`.
 
-    ![APP](images/4app.png)
+    ![APP](images/app.png)
 ## Phase 6: Cleanup
 
 ### Step: Cleanup AWS EC2 Instances
