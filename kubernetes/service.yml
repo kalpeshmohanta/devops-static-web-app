@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     app: static-web-app
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 80
       targetPort: 80
