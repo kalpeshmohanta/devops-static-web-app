@@ -14,8 +14,8 @@ This guide provides step-by-step instructions for setting up and deploying the a
     - `terraform plan` to generate a plan
     - `terraform apply` to apply the plan
 
-## Phase 2: Docker Setup
-
+## Phase 2: Docker Setup in Jenkins-server
+- `ssh -i <key-file> ec2-user@<jenkinsServer-ip>` to access Jenkins server
 ### Step: Install Docker on Jenkins Server
 
 1. **Set up Docker on the Jenkins instance:**
@@ -38,7 +38,7 @@ This guide provides step-by-step instructions for setting up and deploying the a
     sudo systemctl enable docker
     ```
 
-## Phase 3: Security
+## Phase 3: Security in Jenkins-server
 
 ### Step: Install SonarQube and Trivy
 
