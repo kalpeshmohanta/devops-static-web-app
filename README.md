@@ -3,11 +3,11 @@
 This guide provides step-by-step instructions for setting up and deploying the application using Docker, Jenkins, SonarQube, Trivy, prometheus, grafana and Kubernetes.
 
 ## Phase 1: Create Infrastructure using Terraform
+- Use `aws configure` to set up aws credentials for terraform
 1. **Create jenkins server**
     - Create jenkins server and its all components using terraform
 2. **Create Bastion-EKS Cluster**
     - Create EKS cluster and its all components using terraform
-    - Install `unzip`, `kubectl`, `helm` and `aws cli` on the bastion server to access the EKS cluster securely.
 3. **Command**
     - `terraform init` to initialize terraform
     - `terraform validate` to validate the configuration
@@ -190,13 +190,12 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
 ## Phase 4: Kubernetes Setup
 
 ### Prerequisite
-
-- Access to EKS cluster from bastion server
-- Install `Helm` for installing k8s resources
+- `ssh -i <key-file> ec2-user@<bastion-ip>` to access EKS cluster from bastion server
+- Use `aws configure` to set up aws credentials
+- Install `unzip`, `kubectl`, `helm` and `aws cli` on the bastion server to access the EKS cluster securely.
 - Install `kubectl` from the [Official Documentation](https://kubernetes.io/docs/tasks/tools/).
 
 ### Set Up: `kubeconfig`
-
 - The `kubeconfig` file contains the connection details and credentials for your Kubernetes cluster. This file is typically located at `~/.kube/config`.
 
 - **Cloud-based Cluster (EKS):**
