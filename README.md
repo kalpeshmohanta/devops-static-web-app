@@ -48,12 +48,11 @@ This guide provides step-by-step instructions for setting up and deploying the a
     docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
     ```
 
-    To access:
-
-    `publicIP:9000` (default username & password: `admin`)
-    ---
-    Chnage Inbound Rules:
-    - Open port 9000 for inbound traffic
+    - To access:
+        `publicIP:9000` (default username & password: `admin`)
+    
+    - Chnage Inbound Rules:
+        - Open port 9000 for inbound traffic
 
 2. **Set the Docker Container Restart Policy for SonarQube:**
 
