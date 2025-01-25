@@ -1,32 +1,34 @@
 # Project Setup and Deployment Guide
 
-This guide provides step-by-step instructions for setting up and deploying the application using Docker, Jenkins, SonarQube, Trivy, and Kubernetes.
+This guide provides step-by-step instructions for setting up and deploying the application using Docker, Jenkins, SonarQube, Trivy, prometheus, grafana and Kubernetes.
 
-## Phase 1: Docker Setup
+## Phase 1: Create Infrastructure using Terraform
+1. **Create jenkins server**
+    - Create jenkins server and its all components using terraform
+2. **Create Bastion-EKS Cluster**
+    - Create EKS cluster and its all components using terraform
+    - Install `unzip`, `kubectl`, `helm` and `aws cli` on the bastion server to access the EKS cluster securely.
+3. **Command**
+    - `terraform init` to initialize terraform
+    - `terraform validate` to validate the configuration
+    - `terraform plan` to generate a plan
+    - `terraform apply` to apply the plan
 
-### Step: Install Docker and Run the App Using a Container
+## Phase 2: Docker Setup
 
-1. **Set up Docker on the EC2 instance:**
+### Step: Install Docker on Jenkins Server
+
+1. **Set up Docker on the Jenkins instance:**
 
     ```bash
     sudo apt-get update
     sudo apt-get install docker.io -y
-    sudo usermod -aG docker $USER  # Replace with your system's username, e.g., 'ubuntu'
+    sudo usermod -aG docker $USER  # Add system user to docker group
     newgrp docker
-    sudo chmod 777 /var/run/docker.sock
+    sudo chmod 777 /var/run/docker.sock # Add permissions to docker socket
     ```
 
-2. **Set the Docker Container Restart Policy:**
-
-    ```bash
-    # Use when creating the container:
-    docker run -d --restart unless-stopped <image_name>
-
-    # Use when updating an existing container:
-    docker update --restart unless-stopped <container_name_or_id>
-    ```
-
-3. **Ensure Docker Service Starts on Boot:**
+2. **Ensure Docker Service Starts on Boot:**
 
     ```bash
     # Enabled by default, but you can verify
@@ -36,7 +38,7 @@ This guide provides step-by-step instructions for setting up and deploying the a
     sudo systemctl enable docker
     ```
 
-## Phase 2: Security
+## Phase 3: Security
 
 ### Step: Install SonarQube and Trivy
 
@@ -49,6 +51,9 @@ This guide provides step-by-step instructions for setting up and deploying the a
     To access:
 
     `publicIP:9000` (default username & password: `admin`)
+    ---
+    Chnage Inbound Rules:
+    - Open port 9000 for inbound traffic
 
 2. **Set the Docker Container Restart Policy for SonarQube:**
 
@@ -85,11 +90,11 @@ This guide provides step-by-step instructions for setting up and deploying the a
 1. **Integrate SonarQube with your CI/CD pipeline.**
 2. **Configure SonarQube to analyze code for quality and security issues.**
 
-## Phase 3: CI/CD Setup
+## Phase 4: CI/CD Setup
 
 ### Step: Install Jenkins for Automation
 
-1. **Install Jenkins on the EC2 instance to automate deployment:**
+1. **Install Jenkins on the Jenkins EC2 instance to automate deployment:**
 
     **Jenkins Prerequisite: Install Java**
 
@@ -116,6 +121,10 @@ This guide provides step-by-step instructions for setting up and deploying the a
     - Access Jenkins in a web browser using the public IP of your EC2 instance:
 
       `publicIp:8080`
+
+    ---
+    Chnage Inbound Rules:
+    - Open port 8080 for inbound traffic
 
 ### Step: Install Necessary Plugins in Jenkins
 
@@ -174,27 +183,28 @@ sudo usermod -aG docker jenkins # Adds the Jenkins user to the Docker group
 sudo systemctl restart jenkins  # Restart Jenkins Server
 ```
 
+### Step: Run Jenkins Pipeline
+
+1. Run pipleine with Jenkinsfile
+2. Run with `github webhook trigger` which automatically triggered form github webhook
+
 ## Phase 4: Kubernetes Setup
 
 ### Prerequisite
 
+- Access to EKS cluster from bastion server
+- Install `Helm` for installing k8s resources
 - Install `kubectl` from the [Official Documentation](https://kubernetes.io/docs/tasks/tools/).
-- [Youtube Reference](https://www.youtube.com/watch?v=G9MmLUsBd3g)
 
 ### Set Up: `kubeconfig`
 
 - The `kubeconfig` file contains the connection details and credentials for your Kubernetes cluster. This file is typically located at `~/.kube/config`.
-- For Windows: `%USERPROFILE%\.kube\config`
 
 - **Cloud-based Cluster (EKS):**
 
     ```bash
     aws eks update-kubeconfig --region <region> --name <cluster-name>
     ```
-
-### Create Kubernetes Cluster with Node Groups
-
-In this phase, you'll set up a Kubernetes cluster with node groups. This will provide a scalable environment to deploy and manage your applications.
 
 ### Deploy Application with ArgoCD
 
@@ -214,12 +224,56 @@ In this phase, you'll set up a Kubernetes cluster with node groups. This will pr
     - `source`: Set the source of your application, including the GitHub repository URL, revision, and the path to the application within the repository.
     - `syncPolicy`: Configure the sync policy, including automatic syncing, pruning, and self-healing.
 
-4. **Access your Application:**
+4. **Installing prometheus and grafana**
 
-   - To access the app through the LoadBalancer address.
+    - Using helm(package manager) to install Prometheus Operator including Grafana
+    - Add the Helm Stable Charts for your local client. Execute the below command
+        ```bash
+        helm repo add stable https://charts.helm.sh/stable
+        ```
+    - Create Prometheus namespace
+        ```bash
+        kubectl create namespace prometheus
+        ```
+    - Install kube-prometheus-stack
+        ```bash
+        helm install stable prometheus-community/kube-prometheus-stack -n prometheus #helm repo kube-stack-prometheus (formerly prometheus-operator) comes with a grafana deployment embedded.
+        ```
+    - check if prometheus and grafana pods are running already
+        ```bash
+        kubectl get pods -n prometheus
+        kubectl get svc -n prometheus # to check the service
+        ```
+    - In order to make prometheus and grafana available outside the cluster, use LoadBalancer
+        ```bash
+        kubectl edit svc stable-kube-prometheus-sta-prometheus -n prometheus # Edit Prometheus Service
+        kubectl edit svc stable-grafana -n prometheus # Edit Grafana Service
+        ```
+    - Verify if service is changed to LoadBalancer and also to get the Load Balancer URL.
+        ```bash
+        kubectl get svc -n prometheus
+        ```
+5. **Access Prometheus & Grafana UI in the browser using the LoadBalancer URL from svc**
+    - Get Secrets in prometheus namespace for Grafana password
+        ```bash
+        kubectl get secret -n prometheus stable-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+        ```
+    - Grafana `UserName: admin` & `Password: prom-operator`
+    - Access the prometheus UI using the LoadBalancer URL from svc with port `9090`
+    - Access the grafana UI using the LoadBalancer URL from svc
+    - creating a dashboard to monitor the cluster
+        - Click '+' button on left panel and select ‘Import’.
+        - Enter 12740 dashboard id under Grafana.com Dashboard.
+        - Click ‘Load’.
+        - Select ‘Prometheus’ as the endpoint under prometheus data sources drop down.
+        - Click ‘Import’.
+        - After that it will show monitoring dashboard for all cluster nodes
+6. **Access your Application:**
 
-## Phase 5: Cleanup
+   - Access the app through the LoadBalancer address which was mentioned in `step 1`.
+
+## Phase 6: Cleanup
 
 ### Step: Cleanup AWS EC2 Instances
 
-- Terminate AWS EC2 instances that are no longer needed.
+- Terminate AWS EC2 instances,EKS and all other resources that are no longer needed with `terraform destroy`.
