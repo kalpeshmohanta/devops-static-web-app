@@ -224,6 +224,12 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
 
     ![ArgoCD](images/argocd.png)
 
+4. **Access your Application:**
+
+   - Access the app through the LoadBalancer address which was mentioned in `step 1`.
+
+    ![APP](images/app.png)
+
 ### Prometheus and Grafana
 1. **Using helm(package manager) to install Prometheus Operator including Grafana**
     - Add the Helm Stable Charts for your local client. Execute the below command
@@ -272,11 +278,6 @@ sudo systemctl restart jenkins  # Restart Jenkins Server
         - After that it will show monitoring dashboard for all cluster nodes
 
     ![Grafana](images/grafana.png)
-3. **Access your Application:**
-
-   - Access the app through the LoadBalancer address which was mentioned in `step 1`.
-
-    ![APP](images/app.png)
 ## Phase 6: Cleanup
 
 ### Step: Cleanup AWS EC2 Instances
